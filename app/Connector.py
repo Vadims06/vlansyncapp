@@ -12,30 +12,6 @@ class Connector:
             "auth_password": Device.NET_DEVICE_PASSWORD,
             "auth_strict_key": False,
         }
-    '''
-    def _scrapli_open(self):
-        try:
-            self.device = self._scrapli_device.open()
-            return self.device
-        except ScrapliAuthenticationFailed:
-            print("Authentication connection failed to {}".format(self._scrapli_device.host))
-        except ScrapliTimeout:
-            print("Connection timeout to {}".format(self._scrapli_device.host))
-    
-    def _scrapli_close(self):
-        if getattr(self, "_scrapli_device", None):
-            self._scrapli_device.close()
-            self._scrapli_device = None
-        self.scrapli_device = None
-        self.device = None
-   
-    def __enter__(self):
-        """Open a connection to the device."""
-        self.device = self._scrapli_open()
-
-    def __exit__(self):
-        self._scrapli_close()
-    '''
     def get_vlans(self):
         """
         return a list of vlans if connection is sucessful or None
