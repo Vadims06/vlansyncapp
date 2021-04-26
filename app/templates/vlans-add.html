@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}
+Vlan Sync App
+{% endblock %}
+{% block content %}
+<p>Adding new vlans.</p>
+<form method="post">
+    <div class="form-group">
+      <label for="VlanIDInput">Vlan ID</label>
+      <input type="input" class="form-control" id="VlanIDInput" name="_vlan_id" placeholder="vlan ID">
+    </div>
+    <div class="form-group">
+        <label for="VlanNameInput">Vlan Name</label>
+        <input type="input" class="form-control" id="VlanNameInput" name="_vlan_name" placeholder="vlan name">
+    </div>
+    <div class="form-group">
+        <label for="VlanNameInput">Vlan description</label>
+        <input type="input" class="form-control" id="VlanNameInput" name="_vlan_description" placeholder="vlan name">
+    </div>
+    <div class="d-inline-flex bd-highlight ml-4">
+        <input type="submit" name="_submit_add_vlan" value="Create Vlan" class="btn btn-primary btn-sm ">
+    </div>
+</form>
+{% endblock %}

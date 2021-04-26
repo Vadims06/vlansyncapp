@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}
+Vlan Sync App
+{% endblock %}
+{% block content %}
+<blockquote class="blockquote text-center">
+    <h6 class="display-4">Edit Vlan</h6>
+</blockquote>
+<form method="post">
+    <div class="form-group">
+      <label for="VlanIDInput">Vlan ID</label>
+      <input type="input" class="form-control" id="VlanIDInput" name="_vlan_id" placeholder="{{vlan_attr_dd['vlan_id']}}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="VlanNameInput">Vlan Name</label>
+        <input type="input" class="form-control" id="VlanNameInput" name="_vlan_name" value="{{vlan_attr_dd['name']}}">
+    </div>
+    <div class="form-group">
+        <label for="VlanNameInput">Vlan description</label>
+        <input type="input" class="form-control" id="VlanNameInput" name="_vlan_description" placeholder="{{vlan_attr_dd['description']}}">
+    </div>
+    <div class="d-inline-flex bd-highlight ml-4">
+        <input type="submit" name="_submit_save_vlan" value="Save" class="btn btn-success">
+    </div>
+    <div class="d-inline-flex bd-highlight ml-4">
+        <input type="submit" name="_submit_cancel" value="Cancel" class="btn btn-primary">
+    </div>
+</form>
+{% endblock %}

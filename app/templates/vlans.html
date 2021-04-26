@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}
+Vlan Sync App
+{% endblock %}
+{% block content %}
+<blockquote class="blockquote text-center">
+    <h6 class="display-4">Vlan sync app</h6>
+    <footer class="blockquote-footer">This app is aimed at creation/updating/deletion vlan from device if they were created from Web UI and vice versa.</footer>
+</blockquote>
+<form class="form-inline" action="" method="post">
+    <div class="d-inline-flex bd-highlight ml-4">
+        <a href="{{ url_for('vlan_add') }}" class="btn btn-success btn-block">Add</a>
+    </div>
+    <div class="btn-group p-2 bd-highlight" role="group">
+        <input type="submit" value="Delete" class="btn btn-danger btn-block" onclick="js_delete_selected_vlans()">
+    </div>
+</form>
+{% if vlans_attr_dd %}
+    <table class="table table-sm">
+    <thead>
+        <tr>
+        <th>Selection</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vlan_attr in vlans_attr_dd %}
+            <tr>
+                <td><input type="checkbox" name="checkbox_vlanss" id="{{vlan_attr['vlan_id']}}" value="{{vlan_attr['vlan_id']}}"></td>
+                <td><a href="{{url_for('vlan_edit', vlan_id=vlan_attr['vlan_id'])}}">{{ vlan_attr['vlan_id'] }}</a></td>
+                <td>{{ vlan_attr['name'] }}</td>
+                <td>{{ vlan_attr['description'] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+{% endif %}
+{% endblock %}

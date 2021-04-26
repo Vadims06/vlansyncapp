@@ -1,0 +1,122 @@
+version: '3.4'
+
+services:
+  vlansync:
+    image: vlansync:latest
+    container_name: vlansync
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      MONGODB_HOSTNAME: mongodb1
+      MONGODB_DATABASE: vlans
+    depends_on:
+      - mongodb1
+      - mongodb2
+      - mongodb3
+    networks:
+      - frontend
+      - backend
+  
+  mongodb1:
+    image: mongo:4.0.8
+    container_name: mongodb1
+    command: mongod --bind_ip_all --replSet mongo-rs
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodb1vlandata:/data/db
+      - ./app/static/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - backend
+    #healthcheck:
+    #  test: test $$(echo "rs.initiate({_id:'mongo-rs',members:[{_id:0,host:\"mongodb1:27017\",priority:2},{_id:1,host:\"mongodb2:27017\",priority:1},{_id:2,host:\"mongodb3:27017\",priority:1}]}).ok || rs.status().ok" | mongo --port 27017 --quiet) -eq 1
+    #  interval: 10s
+    #  start_period: 30s
+  mongodb2:
+    image: mongo:4.0.8
+    container_name: mongodb2
+    command: mongod --bind_ip_all --replSet mongo-rs
+    ports:
+      - 27018:27017
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodb2vlandata:/data/db
+    networks:
+      - backend
+  mongodb3:
+    image: mongo:4.0.8
+    container_name: mongodb3
+    command: mongod --bind_ip_all --replSet mongo-rs
+    ports:
+      - 27019:27017
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodb3vlandata:/data/db
+    networks:
+      - backend
+  
+  redis:
+    image: redis:4.0.6-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis:/data
+    networks:
+      - backend
+
+  worker:
+    image: vlansync:latest
+    container_name: worker
+    command: rq worker --url redis://redis:6379 device-query --with-scheduler
+    depends_on:
+      - vlansync
+      - redis
+    networks:
+      - backend
+
+  dblistener:
+    image: vlansync:latest
+    container_name: dblistener
+    command: /usr/local/bin/python db_config_watch.py
+    restart: on-failure
+    depends_on:
+      - vlansync
+    networks:
+      - backend
+  snmplistener:
+    image: vlansync:latest
+    container_name: snmplistener
+    command: ["/usr/sbin/snmptrapd", "-n", "-m", "ALL", "-f"]
+    restart: on-failure
+    ports:
+      - 162:1162/udp
+    depends_on:
+      - vlansync
+    networks:
+      - backend
+    volumes:
+      - ./app/mibs/:/usr/share/mibs/
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+volumes:
+  mongodb1vlandata:
+    driver: local
+  mongodb2vlandata:
+    driver: local
+  mongodb3vlandata:
+    driver: local

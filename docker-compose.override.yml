@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  vlansync:
+    environment:
+      NET_DEVICE_HOST: "192.168.1.1"
+      NET_DEVICE_USERNAME: cisco
+      NET_DEVICE_PASSWORD: cisco
